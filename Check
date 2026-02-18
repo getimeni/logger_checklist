@@ -1,0 +1,50 @@
+import sys
+from PyQt6.QtWidgets import QWidget,QApplication, QVBoxLayout, QMainWindow, QCheckBox
+from loguru import logger
+
+logger.add("rabit.log", rotation='1 second')
+logger.success("The sheet of paper is made")
+
+class MyWidget(QWidget):
+    def __init__(self):
+        super().__init__()
+        logger.info("Checklist is made!")
+
+        self.setGeometry(250,250,160,110)
+
+        self.layout = QVBoxLayout(self)
+
+        self.cb = QCheckBox('Unblock', self)
+        self.cb2 = QCheckBox('Press me', self)
+
+        self.layout.addWidget(self.cb)
+        self.layout.addWidget(self.cb2)
+
+        self.cb.stateChanged.connect(self.btn1)
+        self.cb2.stateChanged.connect(self.btn2)
+
+        self.cb2.setEnabled(False)
+
+    logger.info("Checklist is made!")
+
+    def btn1(self, state):
+        if state == 2:
+            self.cb2.setEnabled(True)
+            logger.info('You enabled the second point')
+        else:
+            self.cb2.setEnabled(False)
+            logger.warning('You must do the first point to enable teh second one!')
+
+    def btn2(self, state):
+        if state == 2:
+            self.setWindowTitle('Pressed')
+            logger.success('You successfully completed the tasks!')
+        else:
+            self.setWindowTitle('Not pressed')
+            logger.error('ERROR! You must do the first task!')
+
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    w = MyWidget()
+    w.show()
+    sys.exit(app.exec())
